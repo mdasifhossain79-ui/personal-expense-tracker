@@ -1,0 +1,8 @@
+{
+  "host": "localhost",
+  "port": 3306,
+  "user": "ledger",
+  "password": "CHANGE_ME_STRONG_PASSWORD",
+  "name": "expense_tracker",
+  "lan": false
+}

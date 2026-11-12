@@ -1,0 +1,9 @@
+backups/
+node_modules/
+receipts/
+security.log
+server.log
+db-config.json
+previous-versions/
+.update-temp/
+update*.zip

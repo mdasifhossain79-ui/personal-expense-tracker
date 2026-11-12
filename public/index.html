@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Personal Expense Tracker</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="theme.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<meta name="theme-color" content="#5b3df5">
+</head>
+<body>
+<div class="shell">
+<aside class="side">
+  <div class="brand"><span class="logo"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16a8 8 0 1 1 16 0"/><path d="M12 16l4-5"/><circle cx="12" cy="16" r="1.2" fill="#fff"/></svg></span><span class="brand-name">Personal Expense Tracker</span></div>
+  <nav class="tabs" id="tabs">
+    <button data-view="overview" class="on"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Overview</span></button>
+    <button data-view="expenses"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg><span>Expenses</span></button>
+    <button data-view="accounts"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg><span>Accounts</span></button>
+    <button data-view="income"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 7L7 17"/><path d="M16 17H7V8"/></svg><span>Income</span></button>
+    <button data-view="tracker"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Tracker</span></button>
+    <button data-view="goals"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg><span>Goals</span></button>
+    <button data-view="recurring"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.5 9a9 9 0 0 1 14.9-3.4L23 10M1 14l4.6 4.4A9 9 0 0 0 20.5 15"/></svg><span>Recurring</span></button>
+    <button data-view="report"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 20V10M12 20V4M6 20v-6"/></svg><span>Reports</span></button>
+    <button data-view="categories"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.2 15.9A10 10 0 1 1 8 2.8"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg><span>Budgets</span></button>
+    <button data-view="backup"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg><span>Backup</span></button>
+    <button data-view="health"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span>Health</span></button>
+    <button data-view="security"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Security</span></button>
+  </nav>
+  <div class="side-card">
+    <span class="side-ill"><svg viewBox="0 0 24 24" width="46" height="46" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/><path d="M9 13h7M9 17h5M9 9h3"/></svg></span>
+    <strong>Excel report</strong>
+    <small>Everything in one workbook</small>
+    <a class="btn primary" href="/api/export.xlsx">Download</a>
+  </div>
+</aside>
+<div class="mainwrap">
+  <header class="top">
+    <div class="searchbox"><span class="si"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span><input type="search" id="gsearch" placeholder="Search everything" aria-label="Search everything" autocomplete="off"></div>
+    <div class="top-actions">
+      <a class="export" href="/api/export">Export CSV</a>
+      <button id="lock-btn" hidden>Lock</button>
+    </div>
+  </header>
+  <div id="search-panel" hidden></div>
+  <h1 class="page-title" id="page-title">Overview</h1>
+  <div id="reminders"></div>
+
+<main>
+<!-- ===== Overview ===== -->
+<div id="view-overview" class="view">
+  <div class="ov-actions">
+    <button class="primary" data-goto="expenses">+ Add expense</button>
+    <button data-goto="income">+ Add income</button>
+    <button data-goto="accounts">Move money</button>
+    <button data-goto="report">See reports</button>
+  </div>
+  <div class="ov-grid">
+    <section class="card balance" id="ov-balance"></section>
+    <section class="card"><div class="card-head"><h2>Cash flow</h2><span class="legend"><i style="background:var(--accent)"></i>Spent <i style="background:var(--pink)"></i>Income</span></div><div id="ov-flow"></div></section>
+    <section class="card"><div class="card-head"><h2>Last costs</h2><span class="legend"><i style="background:var(--accent)"></i>Spent <i style="background:var(--soft2)"></i>Income</span></div><div id="ov-bars"></div></section>
+    <section class="card"><div class="card-head"><h2>Efficiency</h2><span class="legend" id="ov-ring-sub"></span></div><div id="ov-ring"></div></section>
+    <section class="card wide"><div class="card-head"><h2>Where the money went this month</h2><button class="link" data-goto="expenses">See all</button></div><div id="ov-cats"></div></section>
+  </div>
+</div>
+
+
+<!-- ===== Expenses ===== -->
+<div id="view-expenses" class="view" hidden>
+  <div class="month">
+    <button id="prev" aria-label="Previous month">‹</button>
+    <input type="month" id="month">
+    <button id="next" aria-label="Next month">›</button>
+    <span class="count" id="period-label"></span>
+    <button id="sum-btn" type="button">Month summary</button>
+    <button id="print-btn" type="button">Print / PDF</button>
+  </div>
+
+  <div id="alerts"></div>
+  <div id="pace"></div>
+  <section class="summary">
+    <div class="total">
+      <span class="label">Spent this month</span>
+      <strong id="total">0.00</strong>
+      <span class="count" id="count"></span>
+      <span class="count" id="budget-line"></span>
+      <span class="count" id="net-line"></span>
+      <span class="safe" id="safe-line"></span>
+    </div>
+    <div class="bars" id="bars"></div>
+  </section>
+
+  <section class="form-wrap">
+    <h2 id="form-title">Add expense</h2>
+    <div class="quick"><input type="text" id="quick-input" placeholder='Type it like a sentence: "tea 20 bkash yesterday"' aria-label="Quick entry" autocomplete="off"><button type="button" id="quick-go">Fill form</button></div>
+    <button type="button" id="sms-btn">Paste a bKash / Nagad / bank SMS</button>
+    <form id="form" autocomplete="off">
+      <input type="hidden" id="id">
+      <label>Date <input type="date" id="spent_on" required></label>
+      <label>Title <input type="text" id="title" list="title-list" maxlength="150" placeholder="Type or pick a saved title" required autocomplete="off"></label>
+      <label>Category <input type="text" id="category" list="cat-list" maxlength="50" placeholder="Type or pick a category" required autocomplete="off"></label>
+      <label>Account <select id="account"></select></label>
+      <label>Amount <input type="number" id="amount" step="0.01" min="0.01" placeholder="0.00" required></label>
+      <div class="full" id="split-wrap"><button type="button" id="split-add">Split across categories</button><div id="split-rows"></div>
+        <p class="count">The amount above is the total. Each extra part is taken from it; the main category keeps the rest.</p></div>
+      <label class="wide">Tags <input type="text" id="tags" maxlength="200" placeholder="comma separated, e.g. trip, work"></label>
+      <label class="wide">Note <input type="text" id="note" maxlength="255" placeholder="Optional"></label>
+      <p class="count hint" id="budget-hint"></p>
+      <div class="actions">
+        <button type="submit" class="primary" id="save">Add expense</button>
+        <button type="button" id="cancel" hidden>Cancel edit</button>
+      </div>
+      <p class="msg" id="msg" role="status"></p>
+    </form>
+  </section>
+
+  <section>
+    <h2>Expenses</h2>
+    <div class="filters">
+      <input type="search" id="q" placeholder="Search title or note" aria-label="Search expenses">
+      <select id="f-cat" aria-label="Filter by category"></select>
+      <select id="f-tag" aria-label="Filter by tag"></select>
+      <label class="check"><input type="checkbox" id="all-months"> Search all months</label>
+      <button type="button" id="clear-filters">Clear</button>
+    </div>
+    <p class="count" id="filter-info"></p>
+    <div id="bulk-bar" class="bulk" hidden>
+      <strong id="bulk-count"></strong>
+      <input type="text" id="bulk-cat" list="cat-list" placeholder="Set category" aria-label="Bulk category" autocomplete="off">
+      <input type="text" id="bulk-tags" placeholder="Add tags" aria-label="Bulk tags" autocomplete="off">
+      <select id="bulk-acct" aria-label="Bulk account"></select>
+      <input type="text" id="bulk-proj" list="proj-list" placeholder="Project / client" aria-label="Bulk project" autocomplete="off">
+      <button type="button" id="bulk-apply" class="primary">Apply</button>
+      <button type="button" id="bulk-del" class="del">Delete selected</button>
+      <button type="button" id="bulk-clear">Clear</button>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Date</th><th>Title</th><th>Category</th><th class="num">Amount</th><th></th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <p class="empty" id="empty" hidden></p>
+  </section>
+</div>
+
+<!-- ===== Income ===== -->
+<div id="view-income" class="view" hidden>
+  <div class="month">
+    <button id="iprev" aria-label="Previous month">‹</button>
+    <input type="month" id="inc-month">
+    <button id="inext" aria-label="Next month">›</button>
+  </div>
+  <section class="form-wrap">
+    <h2 id="inc-title">Add income</h2>
+    <form id="inc-form" autocomplete="off">
+      <input type="hidden" id="inc-id">
+      <label>Date <input type="date" id="inc-date" required></label>
+      <label>Source <input type="text" id="inc-source" list="source-list" autocomplete="off" maxlength="100" placeholder="e.g. Salary" required></label>
+      <label>Amount <input type="number" id="inc-amount" step="0.01" min="0.01" required></label>
+      <label>Account <select id="inc-account"></select></label>
+      <label>Note <input type="text" id="inc-note" maxlength="255" placeholder="Optional"></label>
+      <div class="actions">
+        <button type="submit" class="primary" id="inc-save">Add income</button>
+        <button type="button" id="inc-cancel" hidden>Cancel edit</button>
+      </div>
+      <p class="msg" id="inc-msg" role="status"></p>
+    </form>
+  </section>
+  <section>
+    <h2>Income this month: <span id="inc-total">0.00</span></h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Date</th><th>Source</th><th class="num">Amount</th><th></th></tr></thead>
+        <tbody id="inc-rows"></tbody>
+      </table>
+    </div>
+    <p class="empty" id="inc-empty" hidden>No income recorded this month.</p>
+  </section>
+</div>
+
+<!-- ===== Accounts ===== -->
+<div id="view-accounts" class="view" hidden>
+  <section>
+    <h2>Accounts</h2>
+    <p class="count" id="acct-net"></p>
+    <div id="acct-list"></div>
+    <details id="arch-wrap" hidden><summary>Archived accounts</summary><div id="acct-archived"></div></details>
+  </section>
+  <section>
+    <h2>Net worth over time</h2>
+    <p class="count">Money in banks, wallets and cash minus card balances, at the end of each month. Reconciling changes a starting balance, so earlier months can shift.</p>
+    <div id="nw-chart"></div>
+  </section>
+  <section class="form-wrap">
+    <h2 id="acc-title">Add account</h2>
+    <p class="count">Add as many bank accounts, wallets and cards as you have, even several from the same bank or wallet.</p>
+    <form id="acct-form" autocomplete="off">
+      <input type="hidden" id="acc-id">
+      <label>Type <select id="acc-type"><option value="bank">Bank account</option><option value="mfs">Mobile wallet (MFS)</option><option value="card">Credit card</option><option value="cash">Cash</option></select></label>
+      <label id="acc-prov-wrap"><span id="acc-prov-label">Bank name</span> <input type="text" id="acc-provider" list="bank-list" maxlength="60" placeholder="Pick or type a name"></label>
+      <label>Last digits of number (optional) <input type="text" id="acc-no" maxlength="8" placeholder="e.g. 1234"></label>
+      <label>Nickname (optional) <input type="text" id="acc-name" maxlength="60" placeholder="e.g. Salary account"></label>
+      <label><span id="acc-open-label">Starting balance</span> <input type="number" id="acc-open" step="0.01" value="0"></label>
+      <label id="acc-limit-wrap" hidden>Credit limit <input type="number" id="acc-limit" step="0.01" min="0"></label>
+      <label>Monthly spending limit for this account (optional) <input type="number" id="acc-mlimit" step="0.01" min="0"></label>
+      <label id="acc-due-wrap" hidden>Payment due day of month <input type="number" id="acc-due" min="1" max="31"></label>
+      <div class="actions"><button type="submit" class="primary" id="acc-save">Add account</button><button type="button" id="acc-cancel" hidden>Cancel edit</button></div>
+      <p class="msg" id="acct-msg" role="status"></p>
+    </form>
+  </section>
+  <section class="form-wrap">
+    <h2>Move money between accounts</h2>
+    <p class="count">Paying a card bill: From = your bank or wallet, To = the card. Wallet cash-out: From = wallet, To = Cash, and put the charge in Fee (it is counted as a "Fees" expense).</p>
+    <form id="tr-form" autocomplete="off">
+      <label>Date <input type="date" id="tr-date" required></label>
+      <label>From <select id="tr-from" required></select></label>
+      <label>To <select id="tr-to" required></select></label>
+      <label>Amount <input type="number" id="tr-amount" step="0.01" min="0.01" required></label>
+      <label>Fee (optional) <input type="number" id="tr-fee" step="0.01" min="0" value="0"></label>
+      <label>Note <input type="text" id="tr-note" maxlength="255" placeholder="Optional"></label>
+      <div class="actions"><button type="submit" class="primary">Record transfer</button></div>
+      <p class="msg" id="tr-msg" role="status"></p>
+    </form>
+    <div class="table-scroll"><table><thead><tr><th>Date</th><th>Transfer</th><th class="num">Amount</th><th class="num">Fee</th><th></th></tr></thead><tbody id="tr-rows"></tbody></table></div>
+  </section>
+  <section class="form-wrap">
+    <h2>Other assets and debts</h2>
+    <p class="count">Gold, land, a vehicle, investments, or money you owe. They are added to your whole net worth and to the net worth chart above.</p>
+    <p class="count" id="as-total"></p>
+    <form id="as-form" autocomplete="off">
+      <label>Name <input type="text" id="as-name" maxlength="100" placeholder="e.g. Gold necklace, Car loan" required></label>
+      <label>Type <select id="as-kind"><option value="gold">Gold</option><option value="land">Land</option><option value="property">Property</option><option value="vehicle">Vehicle</option><option value="investment">Investment</option><option value="other">Other asset</option><option value="debt">Debt (money you owe)</option></select></label>
+      <label id="as-qty-wrap">Quantity <input type="number" id="as-qty" step="0.0001" min="0"></label>
+      <label id="as-unit-wrap">Unit <input type="text" id="as-unit" maxlength="12" placeholder="gram, bhori"></label>
+      <label id="as-price-wrap">Price per unit today <input type="number" id="as-price" step="0.01" min="0"></label>
+      <label>Total value (if no quantity) <input type="number" id="as-value" step="0.01" min="0"></label>
+      <label>Value as of (optional) <input type="date" id="as-date"></label>
+      <label class="wide">Note <input type="text" id="as-note" maxlength="255" placeholder="Optional"></label>
+      <div class="actions"><button type="submit" class="primary">Add</button></div>
+      <p class="msg" id="as-msg" role="status"></p>
+    </form>
+    <div id="as-list"></div>
+  </section>
+  <section class="form-wrap">
+    <h2>Low-balance alerts</h2>
+    <p class="count">Set a minimum for a bank account or wallet. You get a banner when it falls below it, or would after recurring bills due in the next 7 days.</p>
+    <div class="table-scroll"><table><thead><tr><th>Account</th><th class="num">Balance</th><th class="num">Warn me below</th></tr></thead><tbody id="lb-list"></tbody></table></div>
+  </section>
+  <section class="form-wrap">
+    <h2>Credit card cost calculator</h2>
+    <p class="count">How long a balance takes to clear, and how much interest it costs, if you pay only the minimum or a fixed amount.</p>
+    <div class="actions"><label>Card <select id="cc-card"></select></label>
+      <label>Balance owed <input type="number" id="cc-bal" step="0.01" min="0"></label>
+      <label>Yearly interest % <input type="number" id="cc-apr" step="0.1" min="0" value="20"></label>
+      <label>Minimum payment % of balance <input type="number" id="cc-min" step="0.5" min="0.5" value="5"></label>
+      <label>Or pay this much each month <input type="number" id="cc-pay" step="0.01" min="0"></label></div>
+    <div class="actions"><button type="button" id="cc-go" class="primary">Calculate</button></div>
+    <div id="cc-out"></div>
+  </section>
+  <section class="form-wrap" id="statement">
+    <h2>Account statement</h2>
+    <div class="actions"><select id="st-acct" aria-label="Account"></select><input type="month" id="st-month" aria-label="Month"><button type="button" id="st-show" class="primary">Show</button><button type="button" id="st-print">Print / PDF</button></div>
+    <div class="table-scroll"><table id="st-table"></table></div>
+  </section>
+</div>
+
+<!-- ===== Tracker ===== -->
+<div id="view-tracker" class="view" hidden>
+  <section class="form-wrap">
+    <h2>Expenses someone will repay</h2>
+    <p class="count" id="rp-sum"></p>
+    <form id="rp-form" autocomplete="off">
+      <label>Expense <select id="rp-expense" required></select></label>
+      <label>Who will repay it <input type="text" id="rp-who" maxlength="100" placeholder="e.g. Office, Rahim" required></label>
+      <div class="actions"><button type="submit" class="primary">Add</button></div>
+      <p class="msg" id="rp-msg" role="status"></p>
+    </form>
+    <div class="table-scroll"><table><thead><tr><th>Expense</th><th>Who</th><th class="num">Amount</th><th></th></tr></thead><tbody id="rp-rows"></tbody></table></div>
+  </section>
+  <section class="form-wrap">
+    <h2>Invoices you sent</h2>
+    <p class="count" id="inv-sum"></p>
+    <form id="inv-form" autocomplete="off">
+      <label>Client <input type="text" id="inv-client" maxlength="100" required></label>
+      <label>Invoice no. (optional) <input type="text" id="inv-number" maxlength="40"></label>
+      <label>Amount <input type="number" id="inv-amount" step="0.01" min="0.01" required></label>
+      <label>Issued on <input type="date" id="inv-issued" required></label>
+      <label>Due on <input type="date" id="inv-due"></label>
+      <label>Pay into account <select id="inv-account"></select></label>
+      <label class="wide">Note <input type="text" id="inv-note" maxlength="255" placeholder="Optional"></label>
+      <div class="actions"><button type="submit" class="primary">Add invoice</button></div>
+      <p class="msg" id="inv-msg" role="status"></p>
+    </form>
+    <div class="table-scroll"><table><thead><tr><th>Client</th><th>Issued</th><th class="num">Amount</th><th>Status</th><th></th></tr></thead><tbody id="inv-rows"></tbody></table></div>
+  </section>
+  <section class="form-wrap">
+    <h2>Warranties</h2>
+    <form id="wr-form" autocomplete="off">
+      <label>Item <input type="text" id="wr-item" maxlength="100" required></label>
+      <label>Bought on <input type="date" id="wr-bought"></label>
+      <label>Warranty ends <input type="date" id="wr-expires" required></label>
+      <label>Linked expense (keeps the receipt) <select id="wr-expense"></select></label>
+      <div class="actions"><button type="submit" class="primary">Add warranty</button></div>
+      <p class="msg" id="wr-msg" role="status"></p>
+    </form>
+    <div class="table-scroll"><table><thead><tr><th>Item</th><th>Ends</th><th>Status</th><th></th></tr></thead><tbody id="wr-rows"></tbody></table></div>
+  </section>
+  <section class="form-wrap">
+    <h2>Expense claim sheet</h2>
+    <p class="count">Pick a date range, and optionally a tag or project, to print one sheet with the totals and the receipt photos. Choose "Save as PDF" to keep it.</p>
+    <div class="actions">
+      <label>Title <input type="text" id="claim-title" maxlength="80" placeholder="e.g. Chittagong trip"></label>
+      <label>From <input type="date" id="claim-from"></label>
+      <label>To <input type="date" id="claim-to"></label>
+      <label>Tag (optional) <input type="text" id="claim-tag" maxlength="30"></label>
+      <label>Project (optional) <input type="text" id="claim-proj" list="proj-list" maxlength="60"></label>
+    </div>
+    <div class="actions"><button type="button" id="claim-go" class="primary">Build claim sheet</button></div>
+    <p class="msg" id="claim-msg" role="status"></p>
+  </section>
+</div>
+
+<!-- ===== Goals ===== -->
+<div id="view-goals" class="view" hidden>
+  <section class="form-wrap">
+    <h2>New savings goal</h2>
+    <form id="goal-form" autocomplete="off">
+      <label>Name <input type="text" id="goal-name" maxlength="100" placeholder="e.g. Laptop" required></label>
+      <label>Target amount <input type="number" id="goal-target" step="0.01" min="0.01" required></label>
+      <label>Target date (optional) <input type="date" id="goal-date"></label>
+      <label>Set aside each month (optional, added automatically) <input type="number" id="goal-monthly" step="0.01" min="0"></label>
+      <div class="actions"><button type="button" id="goal-calc">Work out the monthly amount from the date</button></div>
+      <div class="actions"><button type="submit" class="primary">Add goal</button></div>
+      <p class="msg" id="goal-msg" role="status"></p>
+    </form>
+  </section>
+  <section><h2>Goals</h2><div id="goal-list"></div></section>
+  <section class="form-wrap">
+    <h2>Wishlist</h2>
+    <p class="count">Things you want to buy. Each one shows whether you can afford it now or how many months away it is at your recent saving rate.</p>
+    <form id="wish-form" autocomplete="off">
+      <label>What <input type="text" id="wish-name" maxlength="100" required></label>
+      <label>Price <input type="number" id="wish-price" step="0.01" min="0.01" required></label>
+      <label>Note <input type="text" id="wish-note" maxlength="255" placeholder="Optional"></label>
+      <div class="actions"><button type="submit" class="primary">Add to wishlist</button></div>
+      <p class="msg" id="wish-msg" role="status"></p>
+    </form>
+    <div id="wish-list"></div>
+  </section>
+</div>
+
+<!-- ===== Recurring ===== -->
+<div id="view-recurring" class="view" hidden>
+  <section class="form-wrap">
+    <h2>Add recurring expense</h2>
+    <form id="rec-form" autocomplete="off">
+      <label>Type <select id="rec-kind"><option value="expense">Expense</option><option value="income">Income</option></select></label>
+      <label>Title <input type="text" id="rec-title" list="title-list" maxlength="150" placeholder="e.g. Rent" required></label>
+      <label>Category <input type="text" id="rec-category" list="cat-list" maxlength="50" placeholder="Type or pick" required autocomplete="off"></label>
+      <label>Amount <input type="number" id="rec-amount" step="0.01" min="0.01" required></label>
+      <label>Account <select id="rec-account"></select></label>
+      <label>Day of month <input type="number" id="rec-day" min="1" max="31" value="1" required></label>
+      <label>Starts <input type="month" id="rec-start" required></label>
+      <label>Note <input type="text" id="rec-note" maxlength="255" placeholder="Optional"></label>
+      <div class="actions"><button type="submit" class="primary">Add recurring expense</button></div>
+      <p class="msg" id="rec-msg" role="status"></p>
+    </form>
+  </section>
+  <section>
+    <h2>Monthly schedule</h2>
+    <p class="count">An expense is added automatically on its day each month, whenever the app is running. If a month has fewer days, the last day is used.</p>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Title</th><th>Category</th><th>Day</th><th class="num">Amount</th><th></th></tr></thead>
+        <tbody id="rec-rows"></tbody>
+      </table>
+    </div>
+    <p class="empty" id="rec-empty" hidden>Nothing scheduled yet. Rent, subscriptions and bills fit here.</p>
+  </section>
+  <section class="form-wrap">
+    <h2>When does your budget month start?</h2>
+    <p class="count">If you are paid on the 25th, choose 25 and your months run from the 25th to the 24th. This changes the Expenses and Income tabs, budgets, safe-to-spend, the month summary and account limits. The yearly Reports tab stays on calendar months.</p>
+    <div class="actions"><label>Day of the month <select id="period-day"></select></label><button type="button" id="period-save" class="primary">Save</button></div>
+    <p class="msg" id="period-msg" role="status"></p>
+  </section>
+  <section class="form-wrap">
+    <h2>Suggested budgets</h2>
+    <p class="count">Based on your average spending over the last 3 finished months, plus 5%.</p>
+    <div class="actions"><button type="button" id="sug-btn">Suggest budgets</button><button type="button" id="sug-all" hidden>Use all suggestions</button></div>
+    <div class="table-scroll"><table><thead><tr><th>Category</th><th class="num">3-month average</th><th class="num">Current</th><th class="num">Suggested</th><th></th></tr></thead><tbody id="sug-rows"></tbody></table></div>
+    <p class="msg" id="sug-msg" role="status"></p>
+  </section>
+  <section class="form-wrap">
+    <h2>Auto-categorize rules</h2>
+    <p class="count">When a title contains the text, the category (and tags) are filled in for you. For example "Pathao" becomes Transport.</p>
+    <form id="rule-form" autocomplete="off">
+      <label>Title contains <input type="text" id="rule-pattern" maxlength="100" required></label>
+      <label>Category <input type="text" id="rule-category" list="cat-list" maxlength="50" required autocomplete="off"></label>
+      <label>Tags (optional) <input type="text" id="rule-tags" maxlength="200"></label>
+      <div class="actions"><button type="submit" class="primary">Add rule</button><button type="button" id="rules-apply">Apply to old "Other" entries</button><button type="button" id="rules-apply-all">Apply to all old entries</button></div>
+      <p class="msg" id="rule-msg" role="status"></p>
+    </form>
+    <div class="table-scroll"><table><thead><tr><th>Contains</th><th>Category</th><th>Tags</th><th></th></tr></thead><tbody id="rule-rows"></tbody></table></div>
+  </section>
+</div>
+
+<!-- ===== Backup ===== -->
+<div id="view-backup" class="view" hidden>
+  <section class="form-wrap">
+    <h2>Back up your data</h2>
+    <p class="count">Downloads everything (expenses, categories, budgets, recurring rules) as one file you can keep anywhere.</p>
+    <div class="actions"><a class="btn primary" href="/api/backup" download>Download backup</a></div>
+    <p class="count">The app also saves a copy automatically once a day into the <code>backups</code> folder next to <code>server.js</code> (last 14 kept).</p>
+  </section>
+  <section class="form-wrap">
+    <h2>Find duplicate entries</h2>
+    <p class="count">Looks for expenses with the same date, title and amount, or the same transaction ID, so you can keep one and delete the rest. Receipts move to the one you keep.</p>
+    <div class="actions"><button type="button" id="dup-btn">Look for duplicates</button></div>
+    <p class="msg" id="dup-msg" role="status"></p>
+    <div id="dup-list"></div>
+  </section>
+  <section class="form-wrap">
+    <h2>Import expenses from CSV</h2>
+    <p class="count">Works with spreadsheet or bank-statement CSV files (comma separated, first row = column names). Expenses that already exist (same date, title and amount) are skipped.</p>
+    <div class="actions"><input type="file" id="csv-file" accept=".csv,text/csv" aria-label="CSV file"></div>
+    <form id="map-form" hidden>
+      <label>Saved setups <select id="preset-sel"></select></label>
+      <label>Save this setup as <input type="text" id="preset-name" maxlength="60" placeholder="e.g. bKash statement"></label>
+      <div class="actions"><button type="button" id="preset-save">Save setup</button><button type="button" id="preset-del">Delete setup</button></div>
+      <label>Date column <select id="m-date"></select></label>
+      <label>Title column <select id="m-title"></select></label>
+      <label>Amount column <select id="m-amount"></select></label>
+      <label>Category column <select id="m-category"></select></label>
+      <label>Note column <select id="m-note"></select></label>
+      <label>Date format <select id="m-fmt"><option value="ymd">2026-10-31 (year first)</option><option value="dmy">31/10/2026 (day first)</option><option value="mdy">10/31/2026 (month first)</option></select></label>
+      <label>Which rows are expenses? <select id="m-sign"><option value="abs">All rows</option><option value="neg">Only negative amounts (bank statement)</option></select></label>
+      <label>Account column in the file (optional) <select id="m-acctcol"></select></label>
+      <label>Account for rows without a match <select id="m-account"></select></label>
+      <label>Money received (positive amounts) <select id="m-in"><option value="skip">Skip</option><option value="income">Import as income</option></select></label>
+      <div class="actions"><button type="submit" class="primary">Import</button></div>
+    </form>
+    <p class="msg" id="csv-msg" role="status"></p>
+  </section>
+  <section class="form-wrap">
+    <h2>Encrypted backup</h2>
+    <p class="count">Protects the file with a passphrase (AES-256). Without the passphrase nobody, including you, can open it.</p>
+    <div class="actions"><input type="password" id="enc-pass" placeholder="Passphrase (8+ characters)" autocomplete="new-password" aria-label="Backup passphrase"><button type="button" id="enc-btn">Download encrypted backup</button></div>
+    <p class="msg" id="enc-msg" role="status"></p>
+  </section>
+  <section class="form-wrap">
+    <h2>Automatic daily backups</h2>
+    <p class="count" id="auto-state"></p>
+    <p class="count">The app saves one copy a day in the <code>backups</code> folder. Turn encryption on to protect those files with a passphrase you choose once (existing copies are encrypted too). It protects backup files that get copied or leaked on their own; the key is kept in your MySQL database so the app can encrypt automatically, so it does not protect against someone with full access to this PC. To restore an encrypted copy, use the restore box below with the passphrase.</p>
+    <div class="actions"><input type="password" id="auto-pass" placeholder="Passphrase (8+ characters)" autocomplete="new-password" aria-label="Automatic backup passphrase"><button type="button" class="primary" id="auto-on">Turn on encryption</button><button type="button" id="auto-off" hidden>Turn off</button></div>
+    <p class="msg" id="auto-msg" role="status"></p>
+  </section>
+  <section class="form-wrap">
+    <h2>Restore from a backup</h2>
+    <p class="count">Receipt files live in the <code>receipts</code> folder and are not inside the backup file. Copy that folder too if you move to another PC.</p>
+    <p class="count"><strong>This replaces all current data</strong> with the contents of the file. A safety copy of the current data is saved in the <code>backups</code> folder first.</p>
+    <div class="actions">
+      <input type="password" id="restore-pass" placeholder="Passphrase (encrypted backups only)" autocomplete="off" aria-label="Restore passphrase">
+      <input type="file" id="restore-file" accept=".json,application/json" aria-label="Backup file">
+      <button type="button" id="restore-btn">Restore</button><button type="button" id="test-btn">Test this backup (changes nothing)</button>
+    </div>
+    <p class="msg" id="restore-msg" role="status"></p>
+  </section>
+</div>
+
+<!-- ===== Health ===== -->
+<div id="view-health" class="view" hidden>
+  <section>
+    <h2>Status</h2>
+    <div id="status-box" class="table-scroll"></div>
+  </section>
+  <section>
+    <h2>Things worth fixing</h2>
+    <div class="actions"><button type="button" id="health-refresh">Check again</button></div>
+    <div id="health-list"></div>
+  </section>
+</div>
+
+<!-- ===== Security ===== -->
+<div id="view-security" class="view" hidden>
+  <section class="form-wrap">
+    <h2 id="sec-title">Password lock</h2>
+    <p class="count" id="sec-info"></p>
+    <form id="sec-form" autocomplete="off">
+      <label id="sec-cur-wrap" hidden>Current password <input type="password" id="sec-cur" autocomplete="current-password"></label>
+      <label>New password <input type="password" id="sec-new" minlength="6" autocomplete="new-password" required></label>
+      <label>Repeat new password <input type="password" id="sec-new2" minlength="6" autocomplete="new-password" required></label>
+      <div class="actions">
+        <button type="submit" class="primary" id="sec-save">Set password</button>
+        <button type="button" id="sec-remove" hidden>Remove password</button>
+      </div>
+      <p class="msg" id="sec-msg" role="status"></p>
+    </form>
+  </section>
+  <section>
+    <h2>Recent sign-in activity</h2>
+    <ul class="count" id="sec-log"></ul>
+  </section>
+  <section class="form-wrap">
+    <h2>Quick PIN</h2>
+    <p class="count" id="pin-state"></p>
+    <form id="pin-form" autocomplete="off">
+      <label>Your password <input type="password" id="pin-cur" autocomplete="current-password"></label>
+      <label>New PIN (4 to 8 digits) <input type="password" id="pin-new" inputmode="numeric" pattern="\d{4,8}" maxlength="8" autocomplete="new-password"></label>
+      <div class="actions"><button type="submit" class="primary">Set PIN</button><button type="button" id="pin-remove" hidden>Remove PIN</button></div>
+      <p class="msg" id="pin-msg" role="status"></p>
+    </form>
+    <label class="check"><input type="checkbox" id="lock-hide"> Lock as soon as I switch to another tab or window (needs a password)</label>
+  </section>
+</div>
+
+<!-- ===== Yearly report ===== -->
+<div id="view-report" class="view" hidden>
+  <div class="month">
+    <button id="yprev" aria-label="Previous year">‹</button>
+    <input type="number" id="year" min="2000" max="2100" step="1" aria-label="Year">
+    <button id="ynext" aria-label="Next year">›</button>
+  </div>
+  <section>
+    <h2>Last 12 months</h2>
+    <div class="month"><input type="month" id="trend-month" aria-label="Last month shown"></div>
+    <div id="trend-chart"></div>
+    <h2>This month vs previous month</h2>
+    <div class="table-scroll"><table id="trend-table"></table></div>
+  </section>
+  <section class="summary">
+    <div class="total">
+      <span class="label">Spent this year</span>
+      <strong id="ytotal">0.00</strong>
+      <span class="count" id="yavg"></span>
+    </div>
+    <div class="vbars" id="vbars" role="img" aria-label="Monthly spending"></div>
+  </section>
+  <section>
+    <h2>By category and month</h2>
+    <div class="table-scroll"><table id="ytable" class="grid"></table></div>
+  </section>
+  <section>
+    <h2>Top spending by title</h2>
+    <p class="count">Same title, any capitalization, counted together for the year above.</p>
+    <div class="table-scroll"><table id="top-table"></table></div>
+  </section>
+  <section>
+    <h2>Spending by category</h2>
+    <div id="ch-donut"></div>
+    <h2>Spending by weekday</h2>
+    <div id="ch-week"></div>
+    <h2>This year vs last year</h2>
+    <div id="ch-yoy"></div>
+    <h2>Calendar</h2>
+    <div class="month"><input type="month" id="cal-month" aria-label="Calendar month"><span class="count">Darker days = more spending. A dot marks a recurring bill due that day.</span></div>
+    <div id="cal-grid" class="cal"></div>
+    <h2>What if I spend less?</h2>
+    <p class="count">Move a slider to cut a category and see the yearly saving (based on your last 6 finished months).</p>
+    <div class="table-scroll"><table><thead><tr><th>Category</th><th class="num">Per month now</th><th>Cut by</th><th class="num">Saved per year</th></tr></thead><tbody id="wi-rows"></tbody></table></div>
+    <p class="count" id="wi-total"></p>
+    <h2>Profit by project / client</h2>
+    <div class="table-scroll"><table><thead><tr><th>Project / client</th><th class="num">Income</th><th class="num">Expenses</th><th class="num">Profit</th></tr></thead><tbody id="proj-rows"></tbody></table></div>
+    <h2>Variable income check</h2>
+    <div id="vi-out"></div>
+    <p class="count"><a class="export" id="xl-year" href="/api/export.xlsx">Download this year as an Excel workbook</a></p>
+  </section>
+</div>
+
+<!-- ===== Categories & budgets ===== -->
+<div id="view-categories" class="view" hidden>
+  <section class="form-wrap">
+    <h2>Add category</h2>
+    <form id="cat-form" autocomplete="off">
+      <label>Name <input type="text" id="cat-name" maxlength="50" required></label>
+      <label>Monthly budget <input type="number" id="cat-budget" step="0.01" min="0" placeholder="No limit"></label>
+      <div class="actions"><button type="submit" class="primary">Add category</button></div>
+      <p class="msg" id="cat-msg" role="status"></p>
+    </form>
+  </section>
+  <section>
+    <h2>Categories</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Category</th><th class="num">Monthly budget</th><th></th></tr></thead>
+        <tbody id="cat-rows"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+</main>
+</div>
+<aside class="rail" id="rail">
+  <div class="rail-top"><span class="avatar">PE</span><div><strong>Welcome back</strong><small id="rail-date"></small></div></div>
+  <div class="rail-net" id="rail-net"></div>
+  <h3 class="rail-h">Recent activities</h3>
+  <div id="rail-activity"></div>
+</aside>
+</div>
+<div id="print-report"></div>
+<dialog id="sms-dialog">
+  <h2>Paste a payment SMS</h2>
+  <p class="count">Copy the message from bKash, Nagad, Rocket, Upay or your bank and paste it here. Nothing leaves your PC. Check the filled-in form before you save.</p>
+  <textarea id="sms-text" rows="6" placeholder="e.g. You have paid Tk 250.00 to Foodpanda. Fee Tk 0.00. Balance Tk 1,200.50. TrxID AB12CD34EF at 24/10/2026 12:30" aria-label="SMS text"></textarea>
+  <p class="msg" id="sms-msg" role="status"></p>
+  <div class="actions"><button type="button" class="primary" id="sms-go">Read message</button><button type="button" id="sms-close">Cancel</button></div>
+</dialog>
+<div id="toast" role="status" hidden><span id="toast-msg"></span> <button type="button" id="toast-undo">Undo</button></div>
+<dialog id="sum-dialog" class="wide-dialog">
+  <div id="sum-body"></div>
+  <div class="actions"><button type="button" id="sum-print">Print / PDF</button><button type="button" id="sum-copy">Copy as text</button><button type="button" id="sum-close" class="primary">Close</button></div>
+</dialog>
+<datalist id="cat-list"></datalist>
+<datalist id="title-list"></datalist>
+<datalist id="proj-list"></datalist>
+<datalist id="bank-list"><option value="Agrani Bank"><option value="AB Bank"><option value="Bank Asia"><option value="BRAC Bank"><option value="City Bank"><option value="Citibank N.A."><option value="Dutch-Bangla Bank"><option value="Eastern Bank (EBL)"><option value="HSBC"><option value="Islami Bank Bangladesh"><option value="Janata Bank"><option value="Jamuna Bank"><option value="Midland Bank"><option value="Mutual Trust Bank"><option value="NCC Bank"><option value="One Bank"><option value="Prime Bank"><option value="Pubali Bank"><option value="Rupali Bank"><option value="Social Islami Bank"><option value="Sonali Bank"><option value="Southeast Bank"><option value="Standard Chartered"><option value="Trust Bank"><option value="United Commercial Bank (UCB)"><option value="Uttara Bank"></datalist>
+<datalist id="mfs-list"><option value="bKash"><option value="Nagad"><option value="Rocket (DBBL)"><option value="Upay"><option value="SureCash"><option value="mCash (Islami Bank)"><option value="Tap"><option value="OK Wallet"></datalist>
+<datalist id="source-list"></datalist>
+<dialog id="receipt-dialog">
+  <h2>Receipts</h2>
+  <ul id="rcp-list"></ul>
+  <p class="count">Choose several files at once, drag them in here, or take a photo with your phone.</p>
+  <input type="file" id="rcp-file" multiple accept="image/png,image/jpeg,image/webp,image/gif,application/pdf" aria-label="Add receipt">
+  <input type="file" id="rcp-cam" accept="image/*" capture="environment" hidden>
+  <button type="button" id="rcp-camera">Take a photo</button>
+  <p class="msg" id="rcp-msg" role="status"></p>
+  <button type="button" id="rcp-close">Close</button>
+</dialog>
+<div id="lock" class="lock" hidden>
+  <form id="pin-lock-form" class="lock-card" hidden>
+    <h2>Personal Expense Tracker is locked</h2>
+    <label>PIN <input type="password" id="pin-lock-input" inputmode="numeric" maxlength="8" autocomplete="off" required></label>
+    <button class="primary" type="submit">Unlock with PIN</button>
+    <p class="msg" id="pin-lock-msg" role="alert"></p>
+  </form>
+  <button type="button" id="pin-lock-pw" hidden>Use my password instead</button>
+  <form id="lock-form" class="lock-card">
+    <h2>Personal Expense Tracker is locked</h2>
+    <label>Password <input type="password" id="lock-pw" autocomplete="current-password" required></label>
+    <button class="primary" type="submit">Unlock</button>
+    <p class="msg" id="lock-msg" role="alert"></p>
+  </form>
+</div>
+<script src="extras.js"></script>
+<script src="extras2.js"></script>
+<script src="overview.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
