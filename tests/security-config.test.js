@@ -12,6 +12,6 @@ assert.doesNotMatch(
 
 assert.match(
   serverSource,
-  /DB_PASSWORD\s*\|\|\s*process\.env\.MYSQL_PASSWORD\s*\|\|\s*''/,
+  /DB_PASSWORD\s*\?\?\s*process\.env\.MYSQL_PASSWORD\s*\?\?\s*''/,
   'Database password should be sourced from environment variables without a hard-coded secret.'
 );

@@ -226,3 +226,77 @@ td.num input{width:100%;min-width:7rem}
 .vbars{overflow-x:auto;grid-template-columns:repeat(12,minmax(38px,1fr));padding-bottom:4px}
 .vcol .vval{font-size:.68rem;white-space:nowrap}
 .summary>*{min-width:0}
+
+/* ---------- Accounts: groups and the per-account dashboard ---------- */
+.grp{margin-bottom:26px}
+.grp-head{display:flex;align-items:center;justify-content:space-between;margin:0 4px 12px;gap:12px}
+.grp-head h3{margin:0;font-size:1.05rem;display:flex;align-items:center;gap:10px}
+.grp-head small{color:var(--muted);font-weight:700;background:var(--accent-soft);border-radius:99px;padding:.05rem .6rem;font-size:.75rem}
+.grp-ic{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:var(--accent-soft);color:var(--accent)}
+.grp-total{font-weight:800}
+.acct-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px}
+.acct-wrap{cursor:pointer;border-radius:var(--radius);transition:transform .15s,box-shadow .15s;min-width:0}
+.acct-wrap:hover,.acct-wrap:focus-visible{transform:translateY(-2px);outline:none;box-shadow:0 14px 34px rgba(91,61,245,.2)}
+.acct-wrap .goal{margin:0;height:100%}
+.acct-wrap .goal-top span{font-size:1.15rem;font-weight:800;white-space:nowrap}
+.ad-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.ad-actions{display:flex;gap:8px;flex-wrap:wrap}
+.ad-head{display:flex;align-items:center;gap:16px}
+.ad-ico{display:grid;place-items:center;width:58px;height:58px;border-radius:18px;background:var(--accent-soft);color:var(--accent);flex:none}
+.ad-ico svg{width:28px;height:28px}
+.ad-head h2{margin:0;font-size:1.35rem}.ad-head small{color:var(--muted)}
+.ad-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.stat{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.stat .lbl{color:var(--muted);font-weight:600;font-size:.85rem;display:flex;align-items:center;gap:8px}
+.stat .big{font-size:1.7rem;font-weight:800;letter-spacing:-.02em;line-height:1.15;word-break:break-word}
+.stat .big.in{color:var(--ok)}
+.stat small{color:var(--muted)}
+.stat.hero{background:linear-gradient(135deg,#6b4dff,#4a2ee0 60%,#3a22c4);color:#fff;box-shadow:0 22px 44px rgba(91,61,245,.38)}
+.stat.hero .lbl,.stat.hero small{color:rgba(255,255,255,.82)}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}.dot.in{background:var(--ok)}.dot.out{background:var(--pink)}
+.mini-bar{height:8px;border-radius:99px;background:var(--accent-soft);overflow:hidden;margin-top:8px}
+.mini-bar b{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),#9a86ff)}
+.mini-bar.hi b{background:linear-gradient(90deg,var(--danger),#ff9fbf)}
+.stat.hero .mini-bar{background:rgba(255,255,255,.25)}.stat.hero .mini-bar b{background:#fff}
+.seg{display:inline-flex;background:var(--paper);border-radius:12px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;border-radius:9px;padding:.35rem .85rem;font-size:.85rem;box-shadow:none;color:var(--muted)}
+.seg button.on{background:var(--card);color:var(--accent);box-shadow:var(--shadow)}
+.act.big{padding:12px 4px;border-bottom:1px solid var(--line)}.act.big:last-child{border-bottom:0}
+.act .dt{color:var(--muted);font-size:.85rem;width:7.5rem;flex:none}
+.act .bal{color:var(--muted);font-size:.82rem;width:8.5rem;text-align:right;flex:none}
+.act.big .am{min-width:6.5rem;text-align:right}
+@media(max-width:760px){.act .bal{display:none}.act .dt{width:5.5rem}.ad-actions{width:100%}}
+
+/* dashboard stat boxes: four across for cash / wallet / bank, three over two for cards */
+.ad-stats.is-acct{grid-template-columns:repeat(4,minmax(0,1fr))}
+.ad-stats.is-card{grid-template-columns:repeat(6,minmax(0,1fr))}
+.ad-stats.is-card .stat{grid-column:span 2}
+.ad-stats.is-card .stat:nth-child(n+4){grid-column:span 3}
+.stat .big{font-size:clamp(1.25rem,1.9vw,1.7rem)}
+@media(max-width:1100px){.ad-stats.is-acct,.ad-stats.is-card{grid-template-columns:repeat(2,minmax(0,1fr))}.ad-stats.is-card .stat,.ad-stats.is-card .stat:nth-child(n+4){grid-column:span 1}.stat .big{font-size:1.5rem}}
+@media(max-width:560px){.ad-stats.is-acct,.ad-stats.is-card{grid-template-columns:1fr}}
+
+/* ---------- dashboard: comparison, category bars, filters ---------- */
+.ad-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.ad-two>.card{min-width:0}
+.ad-two h4{margin:16px 0 6px;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.cmp{display:grid;gap:2px}
+.cmp-row{display:grid;grid-template-columns:minmax(70px,1.1fr) 1fr 1fr 74px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:.92rem}
+.cmp-row:last-child{border-bottom:0}.cmp-row.head{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700}
+.cmp-row b,.cmp-row .prev,.cmp-row .chg{text-align:right}.cmp-row .prev{color:var(--muted)}
+.cmp-row.small{font-size:.86rem;padding:6px 0}
+.chg{font-weight:700;font-size:.82rem;white-space:nowrap}.chg.good{color:var(--ok)}.chg.badc{color:var(--danger)}
+.ad-tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ad-tools a.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:.5rem 1rem;border-radius:12px;font-size:.92rem}
+.ad-tools a.btn:hover{border-color:var(--accent);color:var(--accent)}
+.ad-filters{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+.ad-filters label{display:flex;flex-direction:column;gap:4px;min-width:150px}.ad-filters label.grow{flex:1 1 220px}
+.ad-chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px;align-items:center}
+.ad-chips button{padding:.3rem .85rem;border-radius:99px;font-size:.82rem}
+.ad-chips button.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+.ad-chips button.link{margin-left:auto}
+#ad-fsum{margin:.7rem 0 .2rem}
+@media(max-width:1100px){.ad-two{grid-template-columns:1fr}}
+@media(max-width:560px){.cmp-row{grid-template-columns:minmax(60px,1fr) 1fr 1fr 64px;gap:4px;font-size:.84rem}.ad-chips button.link{margin-left:0}}
+
+#ad-chart svg{max-height:300px;display:block;margin:0 auto}

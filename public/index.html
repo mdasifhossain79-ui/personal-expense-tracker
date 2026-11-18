@@ -266,6 +266,42 @@
   </section>
 </div>
 
+<!-- ===== One account's dashboard ===== -->
+<div id="view-acctdetail" class="view" hidden>
+  <div class="ad-top">
+    <button type="button" id="ad-back">← All accounts</button>
+    <div class="ad-actions">
+      <button type="button" class="primary" data-ad="expense">+ Expense</button>
+      <button type="button" data-ad="income">+ Income</button>
+      <button type="button" data-ad="move">Move money</button>
+      <button type="button" data-ad="stmt">Statement</button>
+      <button type="button" data-ad="recon">Reconcile</button>
+      <button type="button" data-ad="editacct">Edit</button>
+    </div>
+  </div>
+  <section class="card ad-head" id="ad-head"></section>
+  <div class="ad-stats" id="ad-stats"></div>
+  <div class="ad-two">
+    <section class="card"><div class="card-head"><h2>This month vs last month</h2><span class="legend" id="ad-cmp-lbl"></span></div><div id="ad-compare"></div></section>
+    <section class="card"><div class="card-head"><h2>Spent by category</h2><span class="legend" id="ad-cat-lbl"></span></div><div id="ad-cats"></div></section>
+  </div>
+  <section class="card"><div class="card-head"><h2>Cash in and out, last 6 months</h2><span class="legend"><i style="background:var(--accent)"></i>Cash out <i style="background:var(--soft2)"></i>Cash in</span></div><div id="ad-chart"></div></section>
+  <section class="card">
+    <div class="card-head"><h2>Transactions</h2>
+      <div class="ad-tools"><a class="btn" id="ad-export" href="#">Export to Excel</a><button type="button" id="ad-print">Print / PDF</button></div></div>
+    <div class="ad-filters">
+      <label>From <input type="date" id="ad-from"></label>
+      <label>To <input type="date" id="ad-to"></label>
+      <label class="grow">Search <input type="search" id="ad-q" placeholder="Details, category, note or amount" autocomplete="off"></label>
+      <div class="seg" id="ad-filter"><button type="button" data-f="all" class="on">All</button><button type="button" data-f="in">Cash in</button><button type="button" data-f="out">Cash out</button></div>
+    </div>
+    <div class="ad-chips" id="ad-chips"><button type="button" data-r="month">This month</button><button type="button" data-r="last">Last month</button><button type="button" data-r="3m">Last 3 months</button><button type="button" data-r="all">All time</button><button type="button" id="ad-clear" class="link">Clear filters</button></div>
+    <p class="count" id="ad-fsum"></p>
+    <div id="ad-recent"></div>
+    <div class="actions"><button type="button" id="ad-more">Show more</button></div>
+  </section>
+</div>
+
 <!-- ===== Tracker ===== -->
 <div id="view-tracker" class="view" hidden>
   <section class="form-wrap">
@@ -645,6 +681,7 @@
 <script src="extras.js"></script>
 <script src="extras2.js"></script>
 <script src="overview.js"></script>
+<script src="accountdash.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

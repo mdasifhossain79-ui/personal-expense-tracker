@@ -63,6 +63,99 @@ function register(app, c) {
     } catch (e) { fail(res, e); }
   });
 
+  // ----- one account's dashboard: balance, cash in / out, card limit and due date, filters, breakdown, comparison, export -----
+  const prevKey = k => { const [y, m] = k.split('-').map(Number), d = new Date(y, m - 2, 1); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}`; };
+  async function accountView(id, o) {
+    const [[a]] = await P().query('SELECT * FROM accounts WHERE id=?', [id]);
+    if (!a) return null;
+    const bal = (await ctx.balances()).find(b => b.id === id), balance = Number(bal ? bal.balance : 0), card = a.type === 'card', r2 = v => Math.round(v * 100) / 100;
+    // every entry that touches this account, newest first (transfer fees are expenses, so they show up here too)
+    const [rows] = await P().query(`SELECT * FROM (
+        SELECT 'income' AS kind, id, received_on AS dt, source AS label, 'Income' AS sub, amount AS delta, note FROM income WHERE account_id=?
+        UNION ALL SELECT 'expense', id, spent_on, title, category, -amount, note FROM expenses WHERE account_id=?
+        UNION ALL SELECT 'transfer', t.id, t.moved_on, CONCAT('Transfer to ', ta.name), 'Transfer', -t.amount, t.note FROM transfers t JOIN accounts ta ON ta.id = t.to_id WHERE t.from_id=?
+        UNION ALL SELECT 'transfer', t.id, t.moved_on, CONCAT('Transfer from ', tb.name), 'Transfer', t.amount, t.note FROM transfers t JOIN accounts tb ON tb.id = t.from_id WHERE t.to_id=?
+      ) x ORDER BY dt DESC, id DESC`, [id, id, id, id]);
+    const cur = ctx.periodKey(ctx.localToday()), prev = prevKey(cur), mr = ctx.monthRange(cur), pr = ctx.monthRange(prev);
+    const totals = { in: 0, out: 0, in_month: 0, out_month: 0 }, cmp = { cur: { in: 0, out: 0 }, prev: { in: 0, out: 0 } }, catCur = {}, catPrev = {};
+    const [y, m] = cur.split('-').map(Number), keys = [];
+    for (let i = 5; i >= 0; i--) { const d = new Date(y, m - 1 - i, 1); keys.push(`${d.getFullYear()}-${pad(d.getMonth() + 1)}`); }
+    const monthly = Object.fromEntries(keys.map(k => [k, { ym: k, in: 0, out: 0 }]));
+    let run = balance;
+    const all = rows.map(r => {                         // balance right after each entry, over the whole history (so filters never change it)
+      const d = Number(r.delta), dt = String(r.dt).slice(0, 10), k = d > 0 ? 'in' : 'out', abs = Math.abs(d);
+      totals[k] += abs; if (dt >= mr[0] && dt < mr[1]) totals[k + '_month'] += abs;
+      const pk = ctx.periodKey(dt); if (monthly[pk]) monthly[pk][k] += abs;
+      if (pk === cur) { cmp.cur[k] += abs; if (r.kind === 'expense') catCur[r.sub] = (catCur[r.sub] || 0) + abs; }
+      if (pk === prev) { cmp.prev[k] += abs; if (r.kind === 'expense') catPrev[r.sub] = (catPrev[r.sub] || 0) + abs; }
+      const out = { kind: r.kind, id: r.id, date: dt, label: r.label, sub: r.sub, note: r.note, delta: d, balance_after: r2(run) }; run -= d; return out;
+    });
+    // filters: date range, text search (details, category, note, or an exact amount) and direction
+    const from = isDate(o.from) ? o.from : null, to = isDate(o.to) ? o.to : null, q = String(o.q || '').trim().toLowerCase().slice(0, 60), dir = ['in', 'out'].includes(o.dir) ? o.dir : 'all', qn = /^\d+(\.\d+)?$/.test(q) ? Number(q) : null;
+    const filtered = all.filter(r => (!from || r.date >= from) && (!to || r.date <= to) && (dir === 'all' || (dir === 'in' ? r.delta > 0 : r.delta < 0))
+      && (!q || [r.label, r.sub, r.note].some(t => String(t || '').toLowerCase().includes(q)) || (qn !== null && Math.abs(r.delta) === qn)));
+    const f = { count: filtered.length, in: 0, out: 0 }; filtered.forEach(r => { f[r.delta > 0 ? 'in' : 'out'] += Math.abs(r.delta); });
+    // spent by category: for the chosen dates, otherwise for this budget month
+    const useRange = !!(from || to), bs = useRange ? from : mr[0], be = useRange ? to : null, byCat = {};
+    all.filter(r => r.kind === 'expense' && (useRange ? ((!from || r.date >= from) && (!to || r.date <= to)) : (r.date >= mr[0] && r.date < mr[1]))).forEach(r => { const c = byCat[r.sub] = byCat[r.sub] || { category: r.sub, total: 0, count: 0 }; c.total += Math.abs(r.delta); c.count++; });
+    const catTotal = Object.values(byCat).reduce((s, c) => s + c.total, 0);
+    const breakdown = { label: useRange ? 'Selected dates' : 'This month', total: r2(catTotal), items: Object.values(byCat).sort((x, y2) => y2.total - x.total).map(c => ({ ...c, total: r2(c.total), pct: catTotal ? Math.round(c.total / catTotal * 100) : 0 })) };
+    const movers = [...new Set([...Object.keys(catCur), ...Object.keys(catPrev)])].map(c => ({ category: c, cur: r2(catCur[c] || 0), prev: r2(catPrev[c] || 0), change: r2((catCur[c] || 0) - (catPrev[c] || 0)) })).sort((x, y2) => Math.abs(y2.change) - Math.abs(x.change)).slice(0, 5);
+    let due = null;
+    if (card && a.due_day) {
+      const t = new Date(ctx.localToday() + 'T00:00:00'); let best = null;
+      for (const off of [0, 1]) { const first = new Date(t.getFullYear(), t.getMonth() + off, 1), last = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate(), d = new Date(first.getFullYear(), first.getMonth(), Math.min(a.due_day, last)); if (d >= t) { best = d; break; } }
+      if (best) due = { date: `${best.getFullYear()}-${pad(best.getMonth() + 1)}-${pad(best.getDate())}`, days_left: Math.round((best - t) / 864e5) };
+    }
+    const alert = (await P().query('SELECT min_balance FROM account_alerts WHERE account_id=?', [id]))[0][0];
+    const spentMonth = Number((await P().query('SELECT COALESCE(SUM(amount),0) AS t FROM expenses WHERE account_id=? AND spent_on >= ? AND spent_on < ?', [id, mr[0], mr[1]]))[0][0].t);
+    const owed = card ? Math.max(0, -balance) : null, limit = a.credit_limit == null ? null : Number(a.credit_limit);
+    const net = x => r2(x.in - x.out), pct = (c, p) => (p ? Math.round((c - p) / p * 100) : null);
+    return {
+      account: { id: a.id, name: a.name, type: a.type, provider: a.provider, acct_no: a.acct_no, archived: !!a.archived, credit_limit: limit, due_day: a.due_day, monthly_limit: a.monthly_limit == null ? null : Number(a.monthly_limit), reconciled_on: a.reconciled_on, min_balance: alert ? Number(alert.min_balance) : null },
+      balance: r2(balance), owed: owed == null ? null : r2(owed), available: card && limit != null ? r2(limit - owed) : null, utilization: card && limit ? Math.round(owed / limit * 100) : null, due,
+      totals: { in: r2(totals.in), out: r2(totals.out), in_month: r2(totals.in_month), out_month: r2(totals.out_month) }, spent_month: r2(spentMonth), month_range: mr,
+      monthly: keys.map(k => ({ ym: k, in: r2(monthly[k].in), out: r2(monthly[k].out) })),
+      compare: { cur_label: cur, prev_label: prev, cur: { in: r2(cmp.cur.in), out: r2(cmp.cur.out), net: net(cmp.cur) }, prev: { in: r2(cmp.prev.in), out: r2(cmp.prev.out), net: net(cmp.prev) },
+        change: { in: pct(cmp.cur.in, cmp.prev.in), out: pct(cmp.cur.out, cmp.prev.out) }, categories: movers },
+      breakdown, filter: { from, to, q, dir, count: f.count, in: r2(f.in), out: r2(f.out) },
+      rows: filtered, recent: filtered.slice(0, o.limit), total_entries: all.length, filtered_entries: filtered.length,
+    };
+  }
+  const viewOpts = req => ({ from: req.query.from, to: req.query.to, q: req.query.q, dir: req.query.dir, limit: Math.min(200, Math.max(1, Math.trunc(Number(req.query.limit)) || 15)) });
+  app.get('/api/accounts/:id/summary', async (req, res) => {
+    try {
+      const v = await accountView(Number(req.params.id), viewOpts(req));
+      if (!v) return res.status(404).json({ error: 'Account not found.' });
+      delete v.rows; res.json(v);
+    } catch (e) { fail(res, e); }
+  });
+  app.get('/api/accounts/:id/export.xlsx', async (req, res) => {      // the account's transactions (with the same filters) as an Excel file
+    let ExcelJS; try { ExcelJS = require('exceljs'); } catch { return bad(res, 'Excel export needs one more install step: stop the app, run "npm install", then start it again.'); }
+    try {
+      const v = await accountView(Number(req.params.id), { ...viewOpts(req), limit: 1e9 });
+      if (!v) return res.status(404).json({ error: 'Account not found.' });
+      const a = v.account, card = a.type === 'card', wb = new ExcelJS.Workbook(); wb.creator = 'Personal Expense Tracker';
+      const MONEY = '#,##0.00', styleHead = ws => { ws.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } }; ws.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF5B3DF5' } }; };
+      const sum = wb.addWorksheet('Summary'); sum.columns = [{ width: 30 }, { width: 28 }];
+      const f = v.filter, desc = [f.from && `from ${f.from}`, f.to && `to ${f.to}`, f.q && `containing "${f.q}"`, f.dir !== 'all' && (f.dir === 'in' ? 'cash in only' : 'cash out only')].filter(Boolean).join(', ') || 'all transactions';
+      const lines = [['Account', a.name], ['Type', ({ bank: 'Bank account', mfs: 'Mobile wallet', cash: 'Cash', card: 'Credit card' })[a.type]], ['Bank / wallet', a.provider || ''], ['Number (last digits)', a.acct_no || ''],
+        [card ? 'Balance owed' : 'Balance', card ? v.owed : v.balance], ...(card ? [['Credit limit', v.account.credit_limit], ['Available credit', v.available], ['Payment due', v.due ? v.due.date : '']] : []),
+        ['Total cash in (all time)', v.totals.in], ['Total cash out (all time)', v.totals.out], ['Cash in this month', v.totals.in_month], ['Cash out this month', v.totals.out_month], ['', ''], ['Rows below', desc], ['Rows shown', f.count], ['Cash in (rows shown)', f.in], ['Cash out (rows shown)', f.out], ['Created', ctx.localToday()]];
+      lines.forEach(l => { const r = sum.addRow(l); r.getCell(1).font = { bold: true }; if (typeof l[1] === 'number') r.getCell(2).numFmt = MONEY; });
+      const ws = wb.addWorksheet('Transactions', { views: [{ state: 'frozen', ySplit: 1 }] });
+      ws.columns = [['Date', 12], ['Type', 11], ['Details', 32], ['Category', 18], ['Note', 30], ['Cash in', 14], ['Cash out', 14], [card ? 'Balance after (negative = owed)' : 'Balance after', 22]].map(([h, w], i) => ({ header: h, width: w, style: i >= 5 ? { numFmt: MONEY } : i === 0 ? { numFmt: 'yyyy-mm-dd' } : {} })); styleHead(ws);
+      const dateOf = s => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s); return new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])); };
+      [...v.rows].reverse().forEach(r => ws.addRow([dateOf(r.date), r.kind === 'transfer' ? 'Transfer' : r.kind === 'income' ? 'Income' : 'Expense', r.label, r.kind === 'expense' ? r.sub : '', r.note || '', r.delta > 0 ? r.delta : null, r.delta < 0 ? -r.delta : null, r.balance_after]));
+      if (v.rows.length) { const n = v.rows.length + 1, t = ws.addRow(['', '', 'Total', '', '', { formula: `SUM(F2:F${n})` }, { formula: `SUM(G2:G${n})` }, '']); t.font = { bold: true }; ws.autoFilter = 'A1:H1'; }
+      const bc = wb.addWorksheet('By category'); bc.columns = [{ header: 'Category', width: 24 }, { header: 'Spent', width: 14, style: { numFmt: MONEY } }, { header: 'Entries', width: 10 }, { header: 'Share', width: 10, style: { numFmt: '0%' } }]; styleHead(bc);
+      v.breakdown.items.forEach(c => bc.addRow([c.category, c.total, c.count, c.pct / 100])); bc.addRow([`(${v.breakdown.label})`, '', '', '']).font = { italic: true };
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename="${String(a.name).replace(/[^\w.-]+/g, '-').replace(/^-+|-+$/g, '') || 'account'}-${ctx.localToday()}.xlsx"`);
+      await wb.xlsx.write(res); res.end();
+    } catch (e) { if (!res.headersSent) fail(res, e); else res.end(); }
+  });
+
   // ----- bulk edit expenses -----
   app.post('/api/bulk/expenses', async (req, res) => {
     const ids = [...new Set((Array.isArray(req.body.ids) ? req.body.ids : []).map(Number).filter(i => Number.isInteger(i) && i > 0))].slice(0, 500);

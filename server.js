@@ -7,28 +7,17 @@ const extras = require('./extras');
 const extras2 = require('./extras2');
 const os = require('os');
 
-// ---- Database config: use environment variables or a local db-config.json file only. ----
+// ---- Edit these if your MySQL setup is different ----
 const DB = {
   host: process.env.DB_HOST || 'localhost',
   port: Number(process.env.DB_PORT || 3306),
   user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || process.env.MYSQL_PASSWORD || '',
+  password: process.env.DB_PASSWORD || 'Asif@21490!',
   name: process.env.DB_NAME || 'expense_tracker',
 };
-const PORT = Number(process.env.PORT || 3005);
-
-try {
-  const localConfigPath = path.join(__dirname, 'db-config.json');
-  const localConfig = JSON.parse(fs.readFileSync(localConfigPath, 'utf8'));
-  if (localConfig && typeof localConfig === 'object') Object.assign(DB, localConfig);
-} catch (err) {
-  // Ignore missing local config; the app expects env-based configuration in production.
-}
-
-if (!DB.password) {
-  console.error('Missing database password. Set DB_PASSWORD or MYSQL_PASSWORD in the environment before starting the app.');
-  process.exit(1);
-}
+const PORT = process.env.PORT || 3005;
+// Optional: db-config.json (see db-config.example.json) overrides the values above, so you need not edit this file.
+try { Object.assign(DB, JSON.parse(fs.readFileSync(path.join(__dirname, 'db-config.json'), 'utf8'))); } catch {}
 // -----------------------------------------------------
 
 const normTags = v => [...new Set(String(v || '').split(',').map(t => t.trim().toLowerCase().replace(/[<>"'&]/g, '').slice(0, 30)).filter(Boolean))].slice(0, 8).join(',') || null;
